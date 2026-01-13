@@ -19,7 +19,7 @@ let user: any
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-describe('@payloadcms/plugin-import-export', () => {
+describe('@afzalimdad9/payload-import-export', () => {
   beforeAll(async () => {
     ;({ payload, restClient } = await initPayloadInt(dirname))
     user = await payload.login({
@@ -33,6 +33,212 @@ describe('@payloadcms/plugin-import-export', () => {
 
   afterAll(async () => {
     await payload.destroy()
+  })
+
+  describe('imports', () => {
+    it('should import CSV data to collection', async () => {
+      const csvData = `title,group.value
+"Test Import 1","imported value 1"
+"Test Import 2","imported value 2"`
+
+      const importDoc = await payload.create({
+        collection: 'imports',
+        user,
+        data: {
+          name: 'Test CSV Import',
+          collection: 'pages',
+          format: 'csv',
+          file: csvData,
+          overwriteExisting: false,
+          status: 'pending',
+        },
+      })
+
+      // Process the import
+      const response = await restClient.POST('/imports/process', {
+        body: JSON.stringify({
+          id: importDoc.id,
+          name: 'Test CSV Import',
+          collectionSlug: 'pages',
+          file: csvData,
+          format: 'csv',
+          locale: 'en',
+          overwriteExisting: false,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      expect(response.status).toBe(200)
+      const result = await response.json()
+      expect(result.success).toBe(true)
+
+      // Verify the import results
+      const updatedImportDoc = await payload.findByID({
+        collection: 'imports',
+        id: importDoc.id,
+      })
+
+      expect(updatedImportDoc.status).toBe('completed')
+      expect(updatedImportDoc.results?.created).toBe(2)
+      expect(updatedImportDoc.results?.total).toBe(2)
+
+      // Verify the imported documents exist
+      const { docs } = await payload.find({
+        collection: 'pages',
+        where: {
+          title: { contains: 'Test Import' },
+        },
+      })
+
+      expect(docs).toHaveLength(2)
+      expect(docs[0].title).toMatch(/Test Import [12]/)
+      expect(docs[0].group?.value).toMatch(/imported value [12]/)
+    })
+
+    it('should import JSON data to collection', async () => {
+      const jsonData = JSON.stringify([
+        { title: 'JSON Import 1', group: { value: 'json value 1' } },
+        { title: 'JSON Import 2', group: { value: 'json value 2' } },
+      ])
+
+      const importDoc = await payload.create({
+        collection: 'imports',
+        user,
+        data: {
+          name: 'Test JSON Import',
+          collection: 'pages',
+          format: 'json',
+          file: jsonData,
+          overwriteExisting: false,
+          status: 'pending',
+        },
+      })
+
+      // Process the import
+      const response = await restClient.POST('/imports/process', {
+        body: JSON.stringify({
+          id: importDoc.id,
+          name: 'Test JSON Import',
+          collectionSlug: 'pages',
+          file: jsonData,
+          format: 'json',
+          locale: 'en',
+          overwriteExisting: false,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      expect(response.status).toBe(200)
+      const result = await response.json()
+      expect(result.success).toBe(true)
+
+      // Verify the import results
+      const updatedImportDoc = await payload.findByID({
+        collection: 'imports',
+        id: importDoc.id,
+      })
+
+      expect(updatedImportDoc.status).toBe('completed')
+      expect(updatedImportDoc.results?.created).toBe(2)
+      expect(updatedImportDoc.results?.total).toBe(2)
+
+      // Verify the imported documents exist
+      const { docs } = await payload.find({
+        collection: 'pages',
+        where: {
+          title: { contains: 'JSON Import' },
+        },
+      })
+
+      expect(docs).toHaveLength(2)
+      expect(docs[0].title).toMatch(/JSON Import [12]/)
+      expect(docs[0].group?.value).toMatch(/json value [12]/)
+    })
+
+    it('should handle import validation errors', async () => {
+      const invalidJsonData = 'invalid json data'
+
+      const importDoc = await payload.create({
+        collection: 'imports',
+        user,
+        data: {
+          name: 'Invalid Import',
+          collection: 'pages',
+          format: 'json',
+          file: invalidJsonData,
+          overwriteExisting: false,
+          status: 'pending',
+        },
+      })
+
+      // Process the import
+      const response = await restClient.POST('/imports/process', {
+        body: JSON.stringify({
+          id: importDoc.id,
+          name: 'Invalid Import',
+          collectionSlug: 'pages',
+          file: invalidJsonData,
+          format: 'json',
+          locale: 'en',
+          overwriteExisting: false,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      expect(response.status).toBe(500)
+      const result = await response.json()
+      expect(result.success).toBe(false)
+      expect(result.error).toBeDefined()
+
+      // Verify the import status is failed
+      const updatedImportDoc = await payload.findByID({
+        collection: 'imports',
+        id: importDoc.id,
+      })
+
+      expect(updatedImportDoc.status).toBe('failed')
+      expect(updatedImportDoc.error).toBeDefined()
+    })
+
+    it('should require collectionSlug parameter', async () => {
+      const csvData = `title
+"Test Import"`
+
+      // Process the import without collectionSlug
+      const response = await restClient.POST('/imports/process', {
+        body: JSON.stringify({
+          id: 'test-id',
+          file: csvData,
+          format: 'csv',
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      expect(response.status).toBe(400)
+      const result = await response.json()
+      expect(result.error).toBe('Collection slug is required')
+    })
+
+    it('should preview import data', async () => {
+      const csvData = `title,group.value
+"Preview Test 1","preview value 1"
+"Preview Test 2","preview value 2"`
+
+      const response = await restClient.POST('/imports/preview', {
+        body: JSON.stringify({
+          file: csvData,
+          format: 'csv',
+        }),
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      expect(response.status).toBe(200)
+      const result = await response.json()
+      expect(result.success).toBe(true)
+      expect(result.preview).toHaveLength(2)
+      expect(result.preview[0].title).toBe('Preview Test 1')
+      expect(result.preview[0]['group.value']).toBe('preview value 1')
+    })
   })
 
   describe('graphql', () => {

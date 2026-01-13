@@ -10,6 +10,8 @@ import { getCreateCollectionExportTask } from './export/getCreateExportCollectio
 import { getCustomFieldFunctions } from './export/getCustomFieldFunctions.js'
 import { getSelect } from './export/getSelect.js'
 import { getExportCollection } from './getExportCollection.js'
+import { getImportCollection } from './getImportCollection.js'
+import { getCreateCollectionImportTask } from './import/getCreateImportCollectionTask.js'
 import { translations } from './translations/index.js'
 import { collectDisabledFieldPaths } from './utilities/collectDisabledFieldPaths.js'
 import { getFlattenedFieldKeys } from './utilities/getFlattenedFieldKeys.js'
@@ -21,10 +23,18 @@ export const importExportPlugin =
   (pluginConfig: ImportExportPluginConfig) =>
   (config: Config): Config => {
     const exportCollection = getExportCollection({ config, pluginConfig })
+    const importCollection = getImportCollection({ config, pluginConfig })
+
     if (config.collections) {
       config.collections.push(exportCollection)
+      if (!pluginConfig.disableImport) {
+        config.collections.push(importCollection)
+      }
     } else {
       config.collections = [exportCollection]
+      if (!pluginConfig.disableImport) {
+        config.collections.push(importCollection)
+      }
     }
 
     // inject custom import export provider
@@ -32,11 +42,16 @@ export const importExportPlugin =
     config.admin.components = config.admin.components || {}
     config.admin.components.providers = config.admin.components.providers || []
     config.admin.components.providers.push(
-      '@payloadcms/plugin-import-export/rsc#ImportExportProvider',
+      '@afzalimdad9/payload-import-export/rsc#ImportExportProvider',
     )
 
     // inject the createExport job into the config
     ;((config.jobs ??= {}).tasks ??= []).push(getCreateCollectionExportTask(config, pluginConfig))
+
+    // inject the createImport job into the config (if import is not disabled)
+    if (!pluginConfig.disableImport) {
+      ;((config.jobs ??= {}).tasks ??= []).push(getCreateCollectionImportTask(config, pluginConfig))
+    }
 
     let collectionsToUpdate = config.collections
 
@@ -56,12 +71,24 @@ export const importExportPlugin =
       if (!components.listMenuItems) {
         components.listMenuItems = []
       }
+
+      // Add export menu item
       components.listMenuItems.push({
         clientProps: {
           exportCollectionSlug: exportCollection.slug,
         },
-        path: '@payloadcms/plugin-import-export/rsc#ExportListMenuItem',
+        path: '@afzalimdad9/payload-import-export/rsc#ExportListMenuItem',
       })
+
+      // Add import menu item (if import is not disabled)
+      if (!pluginConfig.disableImport) {
+        components.listMenuItems.push({
+          clientProps: {
+            importCollectionSlug: importCollection.slug,
+          },
+          path: '@afzalimdad9/payload-import-export/rsc#ImportListMenuItem',
+        })
+      }
 
       // Find fields explicitly marked as disabled for import/export
       const disabledFieldAccessors = collectDisabledFieldPaths(collection.fields)

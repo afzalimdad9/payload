@@ -60,7 +60,7 @@
       "@payloadcms/plugin-form-builder/client": [
         "./packages/plugin-form-builder/src/exports/client.ts"
       ],
-      "@payloadcms/plugin-import-export/rsc": [
+      "@afzalimdad9/payload-import-export/rsc": [
         "./packages/plugin-import-export/src/exports/rsc.ts"
       ],
       "@payloadcms/plugin-mcp": ["./packages/plugin-mcp/src/index.ts"],

@@ -90,7 +90,7 @@ export const getFields = (config: Config, pluginConfig?: ImportExportPluginConfi
               type: 'number',
               admin: {
                 components: {
-                  Field: '@payloadcms/plugin-import-export/rsc#Page',
+                  Field: '@afzalimdad9/payload-import-export/rsc#Page',
                 },
                 condition: ({ limit }) => {
                   // Show the page field only if limit is set
@@ -112,7 +112,7 @@ export const getFields = (config: Config, pluginConfig?: ImportExportPluginConfi
               type: 'text',
               admin: {
                 components: {
-                  Field: '@payloadcms/plugin-import-export/rsc#SortBy',
+                  Field: '@afzalimdad9/payload-import-export/rsc#SortBy',
                 },
               },
               // @ts-expect-error - this is not correctly typed in plugins right now
@@ -123,7 +123,7 @@ export const getFields = (config: Config, pluginConfig?: ImportExportPluginConfi
               type: 'select',
               admin: {
                 components: {
-                  Field: '@payloadcms/plugin-import-export/rsc#SortOrder',
+                  Field: '@afzalimdad9/payload-import-export/rsc#SortOrder',
                 },
                 // Only show when `sort` has a value
                 condition: ({ sort }) => typeof sort === 'string' && sort.trim().length > 0,
@@ -183,7 +183,7 @@ export const getFields = (config: Config, pluginConfig?: ImportExportPluginConfi
           type: 'radio',
           admin: {
             components: {
-              Field: '@payloadcms/plugin-import-export/rsc#SelectionToUseField',
+              Field: '@afzalimdad9/payload-import-export/rsc#SelectionToUseField',
             },
           },
           options: [
@@ -210,7 +210,7 @@ export const getFields = (config: Config, pluginConfig?: ImportExportPluginConfi
           type: 'text',
           admin: {
             components: {
-              Field: '@payloadcms/plugin-import-export/rsc#FieldsToExport',
+              Field: '@afzalimdad9/payload-import-export/rsc#FieldsToExport',
             },
           },
           hasMany: true,
@@ -222,7 +222,7 @@ export const getFields = (config: Config, pluginConfig?: ImportExportPluginConfi
           type: 'text',
           admin: {
             components: {
-              Field: '@payloadcms/plugin-import-export/rsc#CollectionField',
+              Field: '@afzalimdad9/payload-import-export/rsc#CollectionField',
             },
           },
           required: true,
@@ -251,7 +251,7 @@ export const getFields = (config: Config, pluginConfig?: ImportExportPluginConfi
       type: 'ui',
       admin: {
         components: {
-          Field: '@payloadcms/plugin-import-export/rsc#Preview',
+          Field: '@afzalimdad9/payload-import-export/rsc#Preview',
         },
       },
     },

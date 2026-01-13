@@ -2,34 +2,37 @@
 title: Import Export Plugin
 label: Import Export
 order: 40
-desc: Add Import and export functionality to create CSV and JSON data exports
-keywords: plugins, plugin, import, export, csv, JSON, data, ETL, download
+desc: Add Import and export functionality to create CSV and JSON data exports and imports
+keywords: plugins, plugin, import, export, csv, JSON, data, ETL, download, upload
 ---
 
-![https://www.npmjs.com/package/@payloadcms/plugin-import-export](https://img.shields.io/npm/v/@payloadcms/plugin-import-export)
+![https://www.npmjs.com/package/@afzalimdad9/payload-import-export](https://img.shields.io/npm/v/@afzalimdad9/payload-import-export)
 
 <Banner type="warning">
   **Note**: This plugin is in **beta** as some aspects of it may change on any
-  minor releases. It is under development and currently only supports exporting
-  of collection data.
+  minor releases. It is under development and supports both importing and
+  exporting of collection data.
 </Banner>
 
 This plugin adds features that give admin users the ability to download or create export data as an upload collection and import it back into a project.
 
 ## Core Features
 
-- Export data as CSV or JSON format via the admin UI
-- Download the export directly through the browser
-- Create a file upload of the export data
-- Use the jobs queue for large exports
-- (Coming soon) Import collection data
+- **Export data** as CSV or JSON format via the admin UI
+- **Import data** from CSV or JSON files with validation and preview
+- Download exports directly through the browser
+- Create file uploads of export data
+- Preview import data before processing
+- Track import progress and results
+- Use the jobs queue for large exports and imports
+- Comprehensive data validation and error handling
 
 ## Installation
 
 Install the plugin using any JavaScript package manager like [pnpm](https://pnpm.io), [npm](https://npmjs.com), or [Yarn](https://yarnpkg.com):
 
 ```bash
-pnpm add @payloadcms/plugin-import-export
+pnpm add @afzalimdad9/payload-import-export
 ```
 
 ## Basic Usage
@@ -38,7 +41,7 @@ In the `plugins` array of your [Payload Config](https://payloadcms.com/docs/conf
 
 ```ts
 import { buildConfig } from 'payload'
-import { importExportPlugin } from '@payloadcms/plugin-import-export'
+import { importExportPlugin } from '@afzalimdad9/payload-import-export'
 
 const config = buildConfig({
   collections: [Pages, Media],
@@ -60,10 +63,12 @@ export default config
 | `collections`              | string[] | Collections to include Import/Export controls in. Defaults to all collections.                                                       |
 | `debug`                    | boolean  | If true, enables debug logging.                                                                                                      |
 | `disableDownload`          | boolean  | If true, disables the download button in the export preview UI.                                                                      |
+| `disableImport`            | boolean  | If true, disables the import functionality entirely.                                                                                 |
 | `disableJobsQueue`         | boolean  | If true, forces the export to run synchronously.                                                                                     |
 | `disableSave`              | boolean  | If true, disables the save button in the export preview UI.                                                                          |
 | `format`                   | string   | Forces a specific export format (`csv` or `json`), hides the format dropdown, and prevents the user from choosing the export format. |
 | `overrideExportCollection` | function | Function to override the default export collection; takes the default export collection and allows you to modify and return it.      |
+| `overrideImportCollection` | function | Function to override the default import collection; takes the default import collection and allows you to modify and return it.      |
 
 ## Field Options
 
@@ -153,3 +158,90 @@ The following parameters are used by the export function to handle requests:
 | `collectionSlug` | string   | The slug to query against                                                                                         |
 | `where`          | object   | The WhereObject used to query documents to export. This is set by making selections or filters from the list view |
 | `filename`       | text     | What to call the export being created                                                                             |
+
+## Importing Data
+
+The plugin provides comprehensive import functionality that allows users to import data from CSV or JSON files with validation and preview capabilities.
+
+### Import Process
+
+1. **File Upload**: Users can paste CSV or JSON data directly into a textarea field
+2. **Data Preview**: The plugin shows a preview of the data to be imported, including validation results
+3. **Validation**: Data is validated against the collection schema before import
+4. **Processing**: Import runs with progress tracking and error handling
+5. **Results**: Detailed results show created, updated, and failed records
+
+### Import Features
+
+- **Format Support**: Both CSV and JSON formats are supported
+- **Data Validation**: Comprehensive validation against collection field schemas
+- **Preview Mode**: See exactly what data will be imported before processing
+- **Update Mode**: Option to overwrite existing documents based on ID
+- **Error Handling**: Detailed error reporting for failed records
+- **Progress Tracking**: Real-time status updates during import
+- **Nested Data**: Support for complex nested objects and arrays
+
+### CSV Import Considerations
+
+When importing CSV data, the plugin automatically handles:
+
+- **Nested Objects**: Flattened CSV columns (e.g., `address.street`) are converted back to nested objects
+- **Arrays**: Array data can be represented using indexed notation (e.g., `tags.0`, `tags.1`)
+- **Type Conversion**: Automatic conversion of string data to appropriate field types
+- **Empty Values**: Proper handling of empty cells and null values
+
+### Import Validation
+
+The plugin validates imported data against your collection schema:
+
+- **Required Fields**: Ensures all required fields are present
+- **Field Types**: Validates data types (numbers, dates, emails, etc.)
+- **Select Options**: Validates select field values against available options
+- **Relationships**: Basic validation for relationship field IDs
+- **Custom Validation**: Respects any custom field validation rules
+
+### Import API
+
+You can also trigger imports programmatically using the API:
+
+```ts
+// Preview import data
+const previewResponse = await fetch('/api/imports/preview', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    file: csvOrJsonString,
+    format: 'csv', // or 'json'
+  }),
+})
+
+// Process import
+const importResponse = await fetch('/api/imports/process', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    file: csvOrJsonString,
+    collectionSlug: 'pages',
+    format: 'csv',
+    overwriteExisting: true,
+    locale: 'en',
+    name: 'My Import',
+  }),
+})
+```
+
+### Import Results
+
+After processing, the import provides detailed results:
+
+| Property  | Type     | Description                                |
+| --------- | -------- | ------------------------------------------ |
+| `total`   | number   | Total number of records processed          |
+| `created` | number   | Number of new documents created            |
+| `updated` | number   | Number of existing documents updated       |
+| `errors`  | string[] | Array of error messages for failed records |
+
+<Banner type="warning">
+  **Note**: Import functionality requires appropriate access control. Users need
+  create and update permissions for the target collection to perform imports.
+</Banner>

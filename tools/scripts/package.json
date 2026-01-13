@@ -39,7 +39,7 @@
     "payload": "workspace:*"
   },
   "devDependencies": {
-    "@payloadcms/plugin-import-export": "workspace:*",
+    "@afzalimdad9/payload-import-export": "workspace:*",
     "@payloadcms/plugin-multi-tenant": "workspace:*",
     "@payloadcms/richtext-lexical": "workspace:*",
     "@payloadcms/translations": "workspace:*"

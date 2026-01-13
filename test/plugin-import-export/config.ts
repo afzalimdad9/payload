@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url'
 import path from 'path'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-import { importExportPlugin } from '@payloadcms/plugin-import-export'
+import { importExportPlugin } from '@afzalimdad9/payload-import-export'
 import { en } from '@payloadcms/translations/languages/en'
 import { es } from '@payloadcms/translations/languages/es'
 
@@ -44,6 +44,7 @@ export default buildConfigWithDefaults({
     }),
     importExportPlugin({
       collections: ['pages'],
+      disableImport: true,
       overrideExportCollection: (collection) => {
         collection.slug = 'exports-tasks'
         if (collection.admin) {

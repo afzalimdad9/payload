@@ -1,7 +1,7 @@
 import type { AcceptedLanguages, GenericTranslationsObject } from '@payloadcms/translations'
 
-import { translations } from '@payloadcms/plugin-import-export/translations/languages/all'
-import { enTranslations } from '@payloadcms/plugin-import-export/translations/languages/en'
+import { translations } from '@afzalimdad9/payload-import-export/translations/languages/all'
+import { enTranslations } from '@afzalimdad9/payload-import-export/translations/languages/en'
 import path from 'path'
 import { fileURLToPath } from 'url'
 

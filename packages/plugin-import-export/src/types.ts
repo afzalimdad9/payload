@@ -21,6 +21,11 @@ export type ImportExportPluginConfig = {
    */
   disableDownload?: boolean
   /**
+   * If true, disables the import functionality entirely
+   * @default false
+   */
+  disableImport?: boolean
+  /**
    * Enable to force the export to run synchronously
    */
   disableJobsQueue?: boolean
@@ -40,11 +45,33 @@ export type ImportExportPluginConfig = {
    */
   format?: 'csv' | 'json'
   /**
+   * Configuration for media import functionality
+   */
+  media?: {
+    /**
+     * Array of allowed MIME types for media uploads
+     * If not specified, all file types are allowed
+     * @example ['image/jpeg', 'image/png', 'application/pdf']
+     */
+    allowedMimeTypes?: string[]
+    /**
+     * Collection slug where media files should be uploaded
+     * If not specified, the first upload collection will be used
+     */
+    collection?: string
+  }
+  /**
    * This function takes the default export collection configured in the plugin and allows you to override it by modifying and returning it
    * @param collection
    * @returns collection
    */
   overrideExportCollection?: (collection: CollectionOverride) => CollectionOverride
+  /**
+   * This function takes the default import collection configured in the plugin and allows you to override it by modifying and returning it
+   * @param collection
+   * @returns collection
+   */
+  overrideImportCollection?: (collection: CollectionOverride) => CollectionOverride
 }
 
 /**

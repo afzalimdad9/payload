@@ -1,6 +1,6 @@
 {
-  "name": "@payloadcms/plugin-import-export",
-  "version": "3.70.0",
+  "name": "@afzalimdad9/payload-import-export",
+  "version": "3.70.10",
   "description": "Import-Export plugin for Payload",
   "keywords": [
     "payload",
@@ -71,15 +71,18 @@
   },
   "dependencies": {
     "@faceless-ui/modal": "3.0.0",
+    "@payloadcms/richtext-lexical": "workspace:*",
     "@payloadcms/translations": "workspace:*",
     "@payloadcms/ui": "workspace:*",
     "csv-parse": "^5.6.0",
     "csv-stringify": "^6.5.2",
+    "jsdom": "^26.1.0",
     "qs-esm": "7.0.2"
   },
   "devDependencies": {
     "@payloadcms/eslint-config": "workspace:*",
     "@payloadcms/ui": "workspace:*",
+    "@types/jsdom": "^21.1.7",
     "payload": "workspace:*"
   },
   "peerDependencies": {

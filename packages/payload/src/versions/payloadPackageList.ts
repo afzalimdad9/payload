@@ -20,7 +20,7 @@ export const PAYLOAD_PACKAGE_LIST = [
   '@payloadcms/payload-cloud',
   '@payloadcms/plugin-cloud-storage',
   '@payloadcms/plugin-form-builder',
-  '@payloadcms/plugin-import-export',
+  '@afzalimdad9/payload-import-export',
   '@payloadcms/plugin-mcp',
   '@payloadcms/plugin-multi-tenant',
   '@payloadcms/plugin-nested-docs',

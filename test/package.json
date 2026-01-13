@@ -25,6 +25,7 @@
     "recharts": "3.2.1"
   },
   "devDependencies": {
+    "@afzalimdad9/payload-import-export": "workspace:*",
     "@aws-sdk/client-s3": "^3.614.0",
     "@azure/storage-blob": "^12.11.0",
     "@date-fns/tz": "1.2.0",
@@ -53,7 +54,6 @@
     "@payloadcms/plugin-cloud-storage": "workspace:*",
     "@payloadcms/plugin-ecommerce": "workspace:*",
     "@payloadcms/plugin-form-builder": "workspace:*",
-    "@payloadcms/plugin-import-export": "workspace:*",
     "@payloadcms/plugin-mcp": "workspace:*",
     "@payloadcms/plugin-multi-tenant": "workspace:*",
     "@payloadcms/plugin-nested-docs": "workspace:*",

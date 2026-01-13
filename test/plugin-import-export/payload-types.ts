@@ -71,6 +71,7 @@ export interface Config {
     pages: Page;
     posts: Post;
     exports: Export;
+    imports: Import;
     'exports-tasks': ExportsTask;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
@@ -84,6 +85,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     exports: ExportsSelect<false> | ExportsSelect<true>;
+    imports: ImportsSelect<false> | ImportsSelect<true>;
     'exports-tasks': ExportsTasksSelect<false> | ExportsTasksSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
@@ -104,6 +106,7 @@ export interface Config {
   jobs: {
     tasks: {
       createCollectionExport: TaskCreateCollectionExport;
+      createCollectionImport: CreateCollectionImportTask;
       inline: {
         input: unknown;
         output: unknown;
@@ -302,6 +305,34 @@ export interface Export {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "imports".
+ */
+export interface Import {
+  id: string;
+  name: string;
+  format?: ('csv' | 'json') | null;
+  locale?: ('all' | 'en' | 'es' | 'de') | null;
+  collection: 'users' | 'pages' | 'posts';
+  overwriteExisting?: boolean | null;
+  file: string;
+  status?: ('pending' | 'processing' | 'completed' | 'completed_with_errors' | 'failed') | null;
+  results?: {
+    total?: number | null;
+    created?: number | null;
+    updated?: number | null;
+    errors?:
+      | {
+          message?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  error?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "exports-tasks".
  */
 export interface ExportsTask {
@@ -407,7 +438,7 @@ export interface PayloadJob {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: 'inline' | 'createCollectionExport';
+        taskSlug: 'inline' | 'createCollectionExport' | 'createCollectionImport';
         taskID: string;
         input?:
           | {
@@ -440,7 +471,7 @@ export interface PayloadJob {
         id?: string | null;
       }[]
     | null;
-  taskSlug?: ('inline' | 'createCollectionExport') | null;
+  taskSlug?: ('inline' | 'createCollectionExport' | 'createCollectionImport') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
@@ -469,6 +500,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'exports';
         value: string | Export;
+      } | null)
+    | ({
+        relationTo: 'imports';
+        value: string | Import;
       } | null)
     | ({
         relationTo: 'exports-tasks';
@@ -648,6 +683,35 @@ export interface ExportsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "imports_select".
+ */
+export interface ImportsSelect<T extends boolean = true> {
+  name?: T;
+  format?: T;
+  locale?: T;
+  collection?: T;
+  overwriteExisting?: T;
+  file?: T;
+  status?: T;
+  results?:
+    | T
+    | {
+        total?: T;
+        created?: T;
+        updated?: T;
+        errors?:
+          | T
+          | {
+              message?: T;
+              id?: T;
+            };
+      };
+  error?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "exports-tasks_select".
  */
 export interface ExportsTasksSelect<T extends boolean = true> {
@@ -775,6 +839,25 @@ export interface TaskCreateCollectionExport {
     user?: string | null;
     userCollection?: string | null;
     exportsCollection?: string | null;
+  };
+  output?: unknown;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CreateCollectionImportTask".
+ */
+export interface CreateCollectionImportTask {
+  input: {
+    collectionSlug: string;
+    file: string;
+    format: 'csv' | 'json';
+    locale?: string | null;
+    overwriteExisting?: boolean | null;
+    importsCollection?: string | null;
+    id: string;
+    name: string;
+    slug: string;
+    debug?: boolean | null;
   };
   output?: unknown;
 }

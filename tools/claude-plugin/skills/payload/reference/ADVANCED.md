@@ -282,7 +282,7 @@ export default buildConfig({
 - **@payloadcms/plugin-search** - Full-text search integration (Algolia support)
 - **@payloadcms/plugin-stripe** - Stripe payments, subscriptions, webhooks
 - **@payloadcms/plugin-ecommerce** - Complete ecommerce solution (products, variants, carts, orders)
-- **@payloadcms/plugin-import-export** - Import/export data via CSV
+- **@afzalimdad9/payload-import-export** - Import/export data via CSV
 - **@payloadcms/plugin-multi-tenant** - Multi-tenancy with tenant isolation
 - **@payloadcms/plugin-sentry** - Sentry error tracking integration
 - **@payloadcms/plugin-mcp** - Model Context Protocol for AI integrations

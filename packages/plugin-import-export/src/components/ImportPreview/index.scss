@@ -1,0 +1,22 @@
+.import-preview {
+  margin-top: 1rem;
+
+  h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .table-wrapper {
+    max-height: 400px;
+    overflow: auto;
+    border: 1px solid var(--theme-elevation-200);
+    border-radius: 4px;
+  }
+
+  .code-editor {
+    max-height: 400px;
+    border: 1px solid var(--theme-elevation-200);
+    border-radius: 4px;
+  }
+}
