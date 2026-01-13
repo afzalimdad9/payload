@@ -73,7 +73,7 @@ export const Preview = () => {
             limit,
             locale,
             page,
-            sort,
+            sort: sort ? sort : undefined,
             where,
           }),
           credentials: 'include',
