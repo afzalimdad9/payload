@@ -117,6 +117,9 @@ export const getImportFields = (
           name: 'file',
           type: 'textarea',
           admin: {
+            components: {
+              Field: '@afzalimdad9/payload-import-export/rsc#FileUploadField',
+            },
             rows: 10,
           },
           // @ts-expect-error - this is not correctly typed in plugins right now
